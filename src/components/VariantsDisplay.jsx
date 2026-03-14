@@ -27,8 +27,11 @@ const VariantsDisplay = ({ variants, onSelect, isLoading }) => {
           >
             {variant}
             <RiFileCopyLine 
-            onClick={() => onSelect(variant)}
-            color="#9712c0"/>
+              className="copy-icon"
+              size={18}
+              onClick={() => onSelect(variant)}
+              color="#9712c0"
+            />
           </div>
         ))}
       </div>
