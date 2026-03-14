@@ -1,0 +1,138 @@
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    background: rgba(28, 28, 28, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1100;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.api-key-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: rgba(151, 18, 192, 0.15);
+    border: 1px solid rgba(151, 18, 192, 0.3);
+    border-radius: 12px;
+    color: #f5f5f5;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.api-key-btn:hover {
+    background: rgba(151, 18, 192, 0.3);
+    border-color: rgba(151, 18, 192, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(151, 18, 192, 0.2);
+}
+
+.api-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: headerFadeIn 0.3s ease-out;
+}
+
+@keyframes headerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.api-key-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: white;
+    font-size: 13px;
+    width: 280px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.api-key-input:focus {
+    border-color: rgba(151, 18, 192, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 2px rgba(151, 18, 192, 0.15);
+}
+
+.save-btn {
+    background: #9712c0;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.save-btn:hover {
+    background: #b51ddd;
+    box-shadow: 0 4px 10px rgba(151, 18, 192, 0.3);
+}
+
+.cancel-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.cancel-btn:hover {
+    color: white;
+}
+
+@media (max-width: 640px) {
+    .app-header {
+        padding: 0 20px;
+    }
+
+    .api-key-input {
+        width: 180px;
+    }
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f5f5f5;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
