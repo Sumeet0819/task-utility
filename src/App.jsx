@@ -7,7 +7,7 @@ import './App.css'
 const App = () => {
   const [variants, setVariants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [mode, setMode] = useState('title');
   const handleSelectVariant = (variant) => {
     navigator.clipboard.writeText(variant)
       .then(() => {
@@ -29,6 +29,7 @@ const App = () => {
           <VariantsDisplay 
             variants={variants} 
             isLoading={isLoading} 
+            mode={mode}
             onSelect={handleSelectVariant} 
           />
         ) : (
@@ -40,7 +41,11 @@ const App = () => {
         setVariants={setVariants} 
         setIsLoading={setIsLoading} 
         isLoading={isLoading}
+        mode={mode}
+        onModeChange={setMode}
+
       />
+
     </main>
   )
 }

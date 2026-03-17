@@ -10,14 +10,23 @@ import {
   RiErrorWarningLine, 
   RiFlag2Line, 
   RiSparklingLine,
-  RiArrowDownSLine
+  RiArrowDownSLine,
+  RiMicLine,
+  RiMicOffLine
 } from "@remixicon/react";
+import { micService } from "../services/micService";
 
-const Input = ({ setVariants, setIsLoading, isLoading }) => {
+
+const Input = ({ setVariants, setIsLoading, isLoading, mode, onModeChange }) => {
+  console.log("Input Component Rendered with:", { mode, onModeChangeType: typeof onModeChange });
+
+
   const [text, setText] = useState("");
   const [error, setError] = useState("");
-  const [selectedMode, setSelectedMode] = useState("title");
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+
 
   const menuRef = useRef(null);
 
@@ -47,14 +56,47 @@ const Input = ({ setVariants, setIsLoading, isLoading }) => {
     { id: 'more', label: 'More coming soon...', disabled: true, icon: <RiSparklingLine size={16} /> }
   ];
 
+  const handleMicToggle = () => {
+    if (isListening) {
+      micService.stop();
+      setIsListening(false);
+    } else {
+      if (!micService.isSupported()) {
+        setError("Speech recognition is not supported in this browser.");
+        return;
+      }
+      
+      micService.start({
+        onResult: (transcript, isFinal) => {
+          setText(transcript);
+        },
+        onError: (err) => {
+          setError(`Speech recognition error: ${err}`);
+          setIsListening(false);
+        },
+        onEnd: () => {
+          setIsListening(false);
+        }
+      });
+      setIsListening(true);
+    }
+  };
+
   const handleGenerate = async () => {
+    if (isListening) {
+      micService.stop();
+      setIsListening(false);
+    }
+
     if (!text.trim()) return;
+
     
     setIsLoading(true);
     setError("");
     try {
-      const result = await generateTaskVariants(text, selectedMode);
+      const result = await generateTaskVariants(text, mode);
       setVariants(result);
+
     } catch (err) {
       setError("Failed to generate variants. Check your API key.");
       console.error(err);
@@ -77,7 +119,11 @@ const Input = ({ setVariants, setIsLoading, isLoading }) => {
           rows={4}
           placeholder="Enter your task description..."
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => {
+            const newText = e.target.value;
+            setText(newText);
+            micService.setTranscript(newText);
+          }}
         />
 
         <div className="action-group">
@@ -89,31 +135,38 @@ const Input = ({ setVariants, setIsLoading, isLoading }) => {
             type="button"
           >
             <span className="mode-icon">
-              {modes.find(m => m.id === selectedMode)?.icon}
+              {modes.find(m => m.id === mode)?.icon}
             </span>
             <span className="mode-label">
-              {modes.find(m => m.id === selectedMode)?.label}
+              {modes.find(m => m.id === mode)?.label}
             </span>
+
             <RiArrowDownSLine size={14} className={`chevron ${isMenuOpen ? 'up' : ''}`} />
           </button>
           
           {isMenuOpen && (
             <div className="mode-menu">
-              {modes.map((mode) => (
+              {modes.map((m) => (
                 <button
-                  key={mode.id}
-                  className={`mode-option ${selectedMode === mode.id ? 'selected' : ''} ${mode.disabled ? 'disabled' : ''}`}
+                  key={m.id}
+                  className={`mode-option ${mode === m.id ? 'selected' : ''} ${m.disabled ? 'disabled' : ''}`}
                   onClick={() => {
-                    if (!mode.disabled) {
-                      setSelectedMode(mode.id);
+                    if (!m.disabled) {
+                      if (typeof onModeChange === 'function') {
+                        onModeChange(m.id);
+                      } else {
+                        console.error('onModeChange is not a function!', onModeChange);
+                      }
                       setIsMenuOpen(false);
                     }
                   }}
-                  disabled={mode.disabled}
+
+
+                  disabled={m.disabled}
                   type="button"
                 >
-                  <span className="option-icon">{mode.icon}</span>
-                  <span className="option-label">{mode.label}</span>
+                  <span className="option-icon">{m.icon}</span>
+                  <span className="option-label">{m.label}</span>
                 </button>
               ))}
             </div>
@@ -121,9 +174,15 @@ const Input = ({ setVariants, setIsLoading, isLoading }) => {
         </div>
       </div>
         <div className="action-group right">
-          <button className="action-btn" aria-label="Voice">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+          <button 
+            className={`action-btn ${isListening ? 'listening' : ''}`} 
+            aria-label="Voice"
+            onClick={handleMicToggle}
+            type="button"
+          >
+            {isListening ? <RiMicLine size={18} /> : <RiMicOffLine size={18} />}
           </button>
+
           <button 
             className={`send-btn ${isLoading ? 'loading' : ''}`} 
             aria-label="Send"

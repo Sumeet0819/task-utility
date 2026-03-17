@@ -2,7 +2,7 @@ import React from 'react';
 import './variantsDisplay.css';
 import { RiFileCopyLine } from '@remixicon/react';
 
-const VariantsDisplay = ({ variants, onSelect, isLoading }) => {
+const VariantsDisplay = ({ variants, onSelect, isLoading, mode }) => {
   if (isLoading) {
     return (
       <div className="variants-loading">
@@ -17,7 +17,7 @@ const VariantsDisplay = ({ variants, onSelect, isLoading }) => {
 
   return (
     <div className="variants-container">
-      <div className="variants-label">Suggested Titles</div>
+      <div className="variants-label">Suggested {mode}</div>
       <div className="variants-grid">
         {variants.map((variant, index) => (
           <div 
